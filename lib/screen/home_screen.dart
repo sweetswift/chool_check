@@ -21,6 +21,17 @@ class _HomeScreenState extends State<HomeScreen> {
     zoom: 15,
   );
 
+  static final double distance = 100;
+  static final Circle circle = Circle(
+    circleId: CircleId(
+      'circle'),
+    center: companyLatLng,
+    fillColor: Colors.blue.withOpacity(0.5),
+    radius: distance,
+    strokeColor: Colors.blue,
+    strokeWidth: 1,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return Column(
               children: [
                 _CustomGooleMap(
+                  circle: circle,
                   initialPosition: initialPosition,
                 ),
                 _ChoolCheckButton(),
@@ -93,8 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _CustomGooleMap extends StatelessWidget {
   final CameraPosition initialPosition;
+  final Circle circle;
 
-  const _CustomGooleMap({required this.initialPosition, Key? key})
+  const _CustomGooleMap({required this.initialPosition, required this.circle, Key? key})
       : super(key: key);
 
   @override
@@ -105,6 +118,8 @@ class _CustomGooleMap extends StatelessWidget {
         mapType: MapType.normal,
         initialCameraPosition: initialPosition,
         myLocationEnabled: true,
+        myLocationButtonEnabled: false,
+        circles: Set.from([circle]),
       ),
     );
   }
