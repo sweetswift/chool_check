@@ -104,6 +104,7 @@ class _CustomGooleMap extends StatelessWidget {
       child: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: initialPosition,
+        myLocationEnabled: true,
       ),
     );
   }
