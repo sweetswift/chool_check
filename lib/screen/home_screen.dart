@@ -23,9 +23,57 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GoogleMap(
+      appBar: renderAppbar(),
+      body: Column(
+        children: [
+          _CustomGooleMap(
+            initialPosition: initialPosition,
+          ),
+          _ChoolCheckButton(),
+        ],
+      ),
+    );
+  }
+
+  AppBar renderAppbar() {
+    return AppBar(
+      title: Text(
+        '오늘도 출근',
+        style: TextStyle(
+          color: Colors.blue,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      backgroundColor: Colors.white,
+    );
+  }
+}
+
+class _CustomGooleMap extends StatelessWidget {
+  final CameraPosition initialPosition;
+
+  const _CustomGooleMap({required this.initialPosition, Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 2,
+      child: GoogleMap(
+        mapType: MapType.normal,
         initialCameraPosition: initialPosition,
       ),
+    );
+  }
+}
+
+class _ChoolCheckButton extends StatelessWidget {
+  const _ChoolCheckButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Text('출근'),
     );
   }
 }
