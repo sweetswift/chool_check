@@ -3,13 +3,14 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
    <application
         android:label="chool_check"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
        <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="YOUR KEY HERE"/>
+           android:value="AIzaSyBPbPWjt8xna0vG0uivy8HNZdbNFeKljY0"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
