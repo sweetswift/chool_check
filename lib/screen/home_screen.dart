@@ -25,13 +25,30 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: renderAppbar(),
-      body: Column(
-        children: [
-          _CustomGooleMap(
-            initialPosition: initialPosition,
-          ),
-          _ChoolCheckButton(),
-        ],
+      body: FutureBuilder(
+        future: checkPermission(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (snapshot.data == '위치 권한이 허가되었습니다.') {
+            return Column(
+              children: [
+                _CustomGooleMap(
+                  initialPosition: initialPosition,
+                ),
+                _ChoolCheckButton(),
+              ],
+            );
+          }
+
+          return Center(
+            child: Text(snapshot.data),
+          );
+        },
       ),
     );
   }
@@ -45,20 +62,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     LocationPermission checkPermission = await Geolocator.checkPermission();
 
-    if(checkPermission == LocationPermission.denied){
+    if (checkPermission == LocationPermission.denied) {
       checkPermission = await Geolocator.requestPermission();
 
-      if(checkPermission == LocationPermission.denied){
+      if (checkPermission == LocationPermission.denied) {
         return '위치 권한을 허가해주세요.';
       }
     }
 
-    if(checkPermission == LocationPermission.deniedForever){
+    if (checkPermission == LocationPermission.deniedForever) {
       return '앱의 위치 권한을 세팅에서 허가해주세요.';
     }
 
     return '위치 권한이 허가되었습니다.';
-
   }
 
   AppBar renderAppbar() {
