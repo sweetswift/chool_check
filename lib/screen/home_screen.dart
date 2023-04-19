@@ -10,6 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool choolCheckDone = false;
+
   // latiude - 위도
   // logitude - 경도
   static final LatLng companyLatLng = LatLng(
@@ -92,14 +94,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Column(
                     children: [
                       _CustomGooleMap(
-                        circle: isWithinRange
-                            ? withinDistanceCircle
-                            : notWithinDistanceCircle,
+                        circle: choolCheckDone
+                            ? checkDoneCircle
+                            : isWithinRange
+                                ? withinDistanceCircle
+                                : notWithinDistanceCircle,
                         marker: marker,
                         initialPosition: initialPosition,
                       ),
                       _ChoolCheckButton(
                         isWithinRange: isWithinRange,
+                        choolCheckDone: choolCheckDone,
                         onPressed: onChoolCheckPressed,
                       ),
                     ],
@@ -116,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   onChoolCheckPressed() async {
-    await showDialog(
+    final result = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -124,17 +129,27 @@ class _HomeScreenState extends State<HomeScreen> {
           content: Text('출근을 하시겠습니까?'),
           actions: [
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
               child: Text('취소'),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
               child: Text('출근하기'),
             ),
           ],
         );
       },
     );
+
+    if (result) {
+      setState(() {
+        choolCheckDone = true;
+      });
+    }
   }
 
   Future<String> checkPermission() async {
@@ -206,9 +221,13 @@ class _CustomGooleMap extends StatelessWidget {
 class _ChoolCheckButton extends StatelessWidget {
   final bool isWithinRange;
   final VoidCallback onPressed;
+  final bool choolCheckDone;
 
   const _ChoolCheckButton(
-      {required this.isWithinRange, required this.onPressed, Key? key})
+      {required this.isWithinRange,
+      required this.onPressed,
+      required this.choolCheckDone,
+      Key? key})
       : super(key: key);
 
   @override
@@ -220,10 +239,14 @@ class _ChoolCheckButton extends StatelessWidget {
           Icon(
             Icons.timelapse_outlined,
             size: 50.0,
-            color: isWithinRange ? Colors.blue : Colors.red,
+            color: choolCheckDone
+                ? Colors.green
+                : isWithinRange
+                    ? Colors.blue
+                    : Colors.red,
           ),
           const SizedBox(height: 20.0),
-          if (isWithinRange)
+          if (!choolCheckDone && isWithinRange)
             TextButton(
               onPressed: onPressed,
               child: Text('출근하기'),
