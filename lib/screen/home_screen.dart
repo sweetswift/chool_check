@@ -11,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool choolCheckDone = false;
+  GoogleMapController? mapController;
 
   // latiude - 위도
   // logitude - 경도
@@ -101,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : notWithinDistanceCircle,
                         marker: marker,
                         initialPosition: initialPosition,
+                        onMapCreated: onMapCreated,
                       ),
                       _ChoolCheckButton(
                         isWithinRange: isWithinRange,
@@ -118,6 +120,10 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  onMapCreated(GoogleMapController controller) {
+    mapController = controller;
   }
 
   onChoolCheckPressed() async {
@@ -186,6 +192,31 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       backgroundColor: Colors.white,
+      actions: [
+        IconButton(
+          onPressed: () async {
+            print("클릭");
+            if (mapController == null) {
+              return;
+            }
+
+            final location = await Geolocator.getCurrentPosition();
+
+            mapController!.animateCamera(
+              CameraUpdate.newLatLng(
+                LatLng(
+                  location.latitude,
+                  location.longitude,
+                ),
+              ),
+            );
+          },
+          color: Colors.blue,
+          icon: Icon(
+            Icons.my_location,
+          ),
+        )
+      ],
     );
   }
 }
@@ -194,11 +225,13 @@ class _CustomGooleMap extends StatelessWidget {
   final CameraPosition initialPosition;
   final Circle circle;
   final Marker marker;
+  final MapCreatedCallback onMapCreated;
 
   const _CustomGooleMap(
       {required this.initialPosition,
       required this.circle,
       required this.marker,
+      required this.onMapCreated,
       Key? key})
       : super(key: key);
 
@@ -207,13 +240,13 @@ class _CustomGooleMap extends StatelessWidget {
     return Expanded(
       flex: 2,
       child: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: initialPosition,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
-        circles: Set.from([circle]),
-        markers: Set.from([marker]),
-      ),
+          mapType: MapType.normal,
+          initialCameraPosition: initialPosition,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          circles: Set.from([circle]),
+          markers: Set.from([marker]),
+          onMapCreated: onMapCreated),
     );
   }
 }
