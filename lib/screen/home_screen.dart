@@ -21,12 +21,12 @@ class _HomeScreenState extends State<HomeScreen> {
     zoom: 15,
   );
 
-  static final double distance = 100;
+  static final double okDistance = 100;
   static final Circle withinDistanceCircle = Circle(
     circleId: CircleId('circle'),
     center: companyLatLng,
     fillColor: Colors.blue.withOpacity(0.5),
-    radius: distance,
+    radius: okDistance,
     strokeColor: Colors.blue,
     strokeWidth: 1,
   );
@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     circleId: CircleId('notWithinDistanceCircle'),
     center: companyLatLng,
     fillColor: Colors.red.withOpacity(0.5),
-    radius: distance,
+    radius: okDistance,
     strokeColor: Colors.red,
     strokeWidth: 1,
   );
@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     circleId: CircleId('checkDoneCircle'),
     center: companyLatLng,
     fillColor: Colors.green.withOpacity(0.5),
-    radius: distance,
+    radius: okDistance,
     strokeColor: Colors.green,
     strokeWidth: 1,
   );
@@ -52,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
   static final Marker marker = Marker(
     markerId: MarkerId('marker'),
     position: companyLatLng,
-
   );
 
   @override
@@ -69,16 +68,40 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           if (snapshot.data == '위치 권한이 허가되었습니다.') {
-            return Column(
-              children: [
-                _CustomGooleMap(
-                  circle: withinDistanceCircle,
-                  marker: marker,
-                  initialPosition: initialPosition,
-                ),
-                _ChoolCheckButton(),
-              ],
-            );
+            return StreamBuilder<Position>(
+                stream: Geolocator.getPositionStream(),
+                builder: (context, snapshot) {
+                  bool isWithinRange = false;
+
+                  if (snapshot.hasData) {
+                    final start = snapshot.data!;
+                    final end = companyLatLng;
+
+                    final distance = Geolocator.distanceBetween(
+                      start.latitude,
+                      start.longitude,
+                      end.latitude,
+                      end.longitude,
+                    );
+
+                    if (distance < okDistance) {
+                      isWithinRange = true;
+                    }
+                  }
+
+                  return Column(
+                    children: [
+                      _CustomGooleMap(
+                        circle: isWithinRange
+                            ? withinDistanceCircle
+                            : notWithinDistanceCircle,
+                        marker: marker,
+                        initialPosition: initialPosition,
+                      ),
+                      _ChoolCheckButton(),
+                    ],
+                  );
+                });
           }
 
           return Center(
@@ -133,7 +156,10 @@ class _CustomGooleMap extends StatelessWidget {
   final Marker marker;
 
   const _CustomGooleMap(
-      {required this.initialPosition, required this.circle, required this.marker,Key? key})
+      {required this.initialPosition,
+      required this.circle,
+      required this.marker,
+      Key? key})
       : super(key: key);
 
   @override
