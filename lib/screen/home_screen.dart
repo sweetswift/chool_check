@@ -23,13 +23,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static final double distance = 100;
   static final Circle circle = Circle(
-    circleId: CircleId(
-      'circle'),
+    circleId: CircleId('circle'),
     center: companyLatLng,
     fillColor: Colors.blue.withOpacity(0.5),
     radius: distance,
     strokeColor: Colors.blue,
     strokeWidth: 1,
+  );
+  static final Marker marker = Marker(
+    markerId: MarkerId('marker'),
+    position: companyLatLng,
+
   );
 
   @override
@@ -50,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 _CustomGooleMap(
                   circle: circle,
+                  marker: marker,
                   initialPosition: initialPosition,
                 ),
                 _ChoolCheckButton(),
@@ -106,8 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
 class _CustomGooleMap extends StatelessWidget {
   final CameraPosition initialPosition;
   final Circle circle;
+  final Marker marker;
 
-  const _CustomGooleMap({required this.initialPosition, required this.circle, Key? key})
+  const _CustomGooleMap(
+      {required this.initialPosition, required this.circle, required this.marker,Key? key})
       : super(key: key);
 
   @override
@@ -120,6 +127,7 @@ class _CustomGooleMap extends StatelessWidget {
         myLocationEnabled: true,
         myLocationButtonEnabled: false,
         circles: Set.from([circle]),
+        markers: Set.from([marker]),
       ),
     );
   }
