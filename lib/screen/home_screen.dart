@@ -98,7 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         marker: marker,
                         initialPosition: initialPosition,
                       ),
-                      _ChoolCheckButton(),
+                      _ChoolCheckButton(
+                        isWithinRange: isWithinRange,
+                      ),
                     ],
                   );
                 });
@@ -179,12 +181,30 @@ class _CustomGooleMap extends StatelessWidget {
 }
 
 class _ChoolCheckButton extends StatelessWidget {
-  const _ChoolCheckButton({Key? key}) : super(key: key);
+  final bool isWithinRange;
+  const _ChoolCheckButton({required this.isWithinRange,Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Text('출근'),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.timelapse_outlined,
+            size: 50.0,
+            color: isWithinRange ? Colors.blue : Colors.red,
+          ),
+          const SizedBox(height: 20.0),
+          if(isWithinRange)
+          TextButton(
+            onPressed: (){
+              print('출근완료');
+            },
+            child: Text('출근하기'),
+          ),
+        ],
+      ),
     );
   }
 }
