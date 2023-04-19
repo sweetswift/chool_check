@@ -100,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       _ChoolCheckButton(
                         isWithinRange: isWithinRange,
+                        onPressed: onChoolCheckPressed,
                       ),
                     ],
                   );
@@ -111,6 +112,28 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
+    );
+  }
+
+  onChoolCheckPressed() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('출근하기'),
+          content: Text('출근을 하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {},
+              child: Text('취소'),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: Text('출근하기'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -182,7 +205,11 @@ class _CustomGooleMap extends StatelessWidget {
 
 class _ChoolCheckButton extends StatelessWidget {
   final bool isWithinRange;
-  const _ChoolCheckButton({required this.isWithinRange,Key? key}) : super(key: key);
+  final VoidCallback onPressed;
+
+  const _ChoolCheckButton(
+      {required this.isWithinRange, required this.onPressed, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -196,13 +223,11 @@ class _ChoolCheckButton extends StatelessWidget {
             color: isWithinRange ? Colors.blue : Colors.red,
           ),
           const SizedBox(height: 20.0),
-          if(isWithinRange)
-          TextButton(
-            onPressed: (){
-              print('출근완료');
-            },
-            child: Text('출근하기'),
-          ),
+          if (isWithinRange)
+            TextButton(
+              onPressed: onPressed,
+              child: Text('출근하기'),
+            ),
         ],
       ),
     );
