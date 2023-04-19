@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   static final double distance = 100;
-  static final Circle circle = Circle(
+  static final Circle withinDistanceCircle = Circle(
     circleId: CircleId('circle'),
     center: companyLatLng,
     fillColor: Colors.blue.withOpacity(0.5),
@@ -30,6 +30,25 @@ class _HomeScreenState extends State<HomeScreen> {
     strokeColor: Colors.blue,
     strokeWidth: 1,
   );
+
+  static final Circle notWithinDistanceCircle = Circle(
+    circleId: CircleId('notWithinDistanceCircle'),
+    center: companyLatLng,
+    fillColor: Colors.red.withOpacity(0.5),
+    radius: distance,
+    strokeColor: Colors.red,
+    strokeWidth: 1,
+  );
+
+  static final Circle checkDoneCircle = Circle(
+    circleId: CircleId('checkDoneCircle'),
+    center: companyLatLng,
+    fillColor: Colors.green.withOpacity(0.5),
+    radius: distance,
+    strokeColor: Colors.green,
+    strokeWidth: 1,
+  );
+
   static final Marker marker = Marker(
     markerId: MarkerId('marker'),
     position: companyLatLng,
@@ -53,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return Column(
               children: [
                 _CustomGooleMap(
-                  circle: circle,
+                  circle: withinDistanceCircle,
                   marker: marker,
                   initialPosition: initialPosition,
                 ),
